@@ -1,35 +1,24 @@
-#include <stdio.h>
+#include "raylib.h"
 
-//Fuction Prototypes
-int OneWeekCacao();
+int main(void) {
+    InitWindow(800, 450, "CMSC 18 - Final Project");
 
-//Initialization
-float WeekUsage[7];
-float total = 0;
-float average;
-float *ptrWU = WeekUsage; //Pointer to Array of Weekly Usage
+    Font sfFont = LoadFontEx("sf-pro-display/SFPRODISPLAYBOLD.otf", 96, 0, 0); 
 
-int main () {
+    SetTextureFilter(sfFont.texture, TEXTURE_FILTER_BILINEAR);
 
-    OneWeekCacao();
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
 
-    return 0;
-}
+        DrawTextEx(sfFont, "NA SET UP DIN SA WAKAS!", (Vector2){20, 100}, 56, 2, BLACK);
+        DrawTextEx(sfFont, "Lorem ipsum", (Vector2){25, 200}, 32, 1, DARKGRAY);
 
-//Part 1
-//For Further Refinement
-int OneWeekCacao (){
-    puts ("Welcome to philippine airlines.");
-    for (int i=0; i<7; i++){
-        printf("Enter your usage for day %d in kg", i+1);
-        scanf("%f", (ptrWU + i));
-        total += *(ptrWU + i); 
+        EndDrawing();
     }
 
-    average = total / 7;
-    printf("Average usage is %2f", average);
-
-
+    UnloadFont(sfFont);
+    CloseWindow();
 
     return 0;
 }
