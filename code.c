@@ -42,7 +42,7 @@ int main() {
     // 3. Main Menu Loop
     do {
         printf("\n========================================\n");
-        printf("   CACAO SUPPLY MANAGEMENT SYSTEM\n");
+        printf("       CaoWing Management System\n");
         printf("========================================\n");
         printf("[1] Input Weekly Consumption\n");
         printf("[2] Forecast Supply & Reorder Point\n");
