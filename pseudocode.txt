@@ -1,0 +1,45 @@
+START
+
+Initialize supplier list, consumption array, inventory variables
+Load supplier data from file
+
+REPEAT
+    Display main menu
+    Get user choice
+
+    IF choice = 1 THEN
+        Input cacao consumption for 7 days
+        Compute total and average consumption
+        Mark data as available
+
+    ELSE IF choice = 2 THEN
+        IF no consumption data THEN
+            Display error
+        ELSE
+            Input current inventory and reorder threshold
+            Compute days until empty and reorder point
+            Display supply status
+
+    ELSE IF choice = 3 THEN
+        IF supplier list is empty THEN
+            Display warning
+        ELSE
+            Ask for location keyword
+            Display suppliers matching location (case-insensitive)
+
+    ELSE IF choice = 4 THEN
+        IF no data available THEN
+            Display error
+        ELSE
+            Save total, average, and inventory to report file
+
+    ELSE IF choice = 5 THEN
+        Display exit message
+
+    ELSE
+        Display invalid option message
+    END IF
+
+UNTIL choice = 5
+
+END

@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h> // Required for tolower() function
 
-// --- STRUCTURE DEFINITION ---
+// Use at least one user-defined function for computations (e.g., forecasting supply).
 typedef struct {
-    char name[100];      // Increased size for long names
-    char address[150];   // Renamed 'city' to 'address' to fit full location
-    char contact[100];   // Increased size for emails/phones
-    char capacity[50];   // NEW: Stores the MT annually
+    char name[100];     
+    char address[150];   
+    char contact[100];  
+    char capacity[50];  
 } Supplier;
 
 // --- FUNCTION PROTOTYPES ---
@@ -17,6 +18,7 @@ void analyzeConsumption(float daily_usage[], float *total, float *average);
 void forecastSupply(float inventory, float daily_avg, float reorder_threshold);
 void viewSuppliers(Supplier suppliers[], int count);
 void saveReport(float total, float average, float inventory);
+void toLowerCase(char *source, char *destination); // New helper function
 
 // Helper functions
 void clearInputBuffer();
@@ -24,7 +26,8 @@ float getValidFloat(const char *prompt);
 int getValidInt(const char *prompt);
 
 int main() {
-    // 1. Initialize Variables
+    // Initializing Variables
+    // Use arrays, strings, and pointers for storing consumption data and supplier names.
     Supplier suppliers[100];
     int supplier_count = 0;
     float daily_usage[7];
@@ -81,7 +84,7 @@ int main() {
                     printf("\n[!] Error: No data available to save.\n");
                 } else {
                     if (current_inventory <= 0) {
-                         current_inventory = getValidFloat("Enter current inventory to save (kg): ");
+                        current_inventory = getValidFloat("Enter current inventory to save (kg): ");
                     }
                     saveReport(total_consumption, average_consumption, current_inventory);
                 }
@@ -105,7 +108,7 @@ int main() {
     return 0;
 }
 
-// --- IMPLEMENTATIONS ---
+// FUNCTIONS
 
 void clearInputBuffer() {
     int c;
@@ -136,6 +139,16 @@ int getValidInt(const char *prompt) {
     return value;
 }
 
+// Helper to convert string to lowercase for search comparison
+void toLowerCase(char *source, char *destination) {
+    int i = 0;
+    while (source[i] != '\0') {
+        destination[i] = tolower(source[i]);
+        i++;
+    }
+    destination[i] = '\0';
+}
+
 void loadSuppliers(Supplier suppliers[], int *count) {
     FILE *file = fopen("suppliers.txt", "r");
     
@@ -143,15 +156,12 @@ void loadSuppliers(Supplier suppliers[], int *count) {
         printf("\n[!] File Error: 'suppliers.txt' not found.\n");
         return;
     }
-
-    // UPDATED PARSING LOGIC FOR 4 COLUMNS
-    // %[^,] means "read string until a comma is found"
-    // %[^\n] means "read string until a newline is found"
+    // Reads CSV format: Name, Address, Contact, Capacity
     while (*count < 100 && fscanf(file, " %99[^,], %149[^,], %99[^,], %49[^\n]", 
-           suppliers[*count].name, 
-           suppliers[*count].address, 
-           suppliers[*count].contact,
-           suppliers[*count].capacity) == 4) {
+            suppliers[*count].name, 
+            suppliers[*count].address, 
+            suppliers[*count].contact,
+            suppliers[*count].capacity) == 4) {
         (*count)++;
     }
     
@@ -211,18 +221,25 @@ void forecastSupply(float inventory, float daily_avg, float reorder_threshold) {
 
 void viewSuppliers(Supplier suppliers[], int count) {
     char target[50];
+    char target_lower[50];     // To store lowercase search term
+    char address_lower[150];   // To store lowercase address for comparison
     int found = 0;
 
     printf("\nEnter location keyword (e.g., Davao, Panabo, Calinan): ");
     if (fgets(target, 50, stdin) != NULL) {
-        target[strcspn(target, "\n")] = 0; // Strip newline
+        target[strcspn(target, "\n")] = 0;
     }
+
+    // Convert input to lowercase
+    toLowerCase(target, target_lower);
 
     printf("\n--- Search Results for '%s' ---\n", target);
     for (int i = 0; i < count; i++) {
-        // strstr checks if 'target' is INSIDE 'address'
-        // Example: Searching "Davao" will match "Davao City" and "Davao del Norte"
-        if (strstr(suppliers[i].address, target) != NULL) { 
+        // Convert the supplier's address to lowercase for checking
+        toLowerCase(suppliers[i].address, address_lower);
+
+        // Check if target is inside address (case-insensitive)
+        if (strstr(address_lower, target_lower) != NULL) { 
             printf("Name:     %s\n", suppliers[i].name);
             printf("Address:  %s\n", suppliers[i].address);
             printf("Contact:  %s\n", suppliers[i].contact);
@@ -233,7 +250,7 @@ void viewSuppliers(Supplier suppliers[], int count) {
     }
 
     if (!found) {
-        printf("No suppliers found matching \"%s\". (Note: Search is case-sensitive)\n", target);
+        printf("No suppliers found matching \"%s\".\n", target);
     }
 }
 
