@@ -89,7 +89,7 @@ int main() {
                     analyzeConsumption(daily_usage, &total_consumption, &average_consumption);
                     
                     // Ask for inventory details
-                    current_inventory = getValidFloat("\nEnter current inventory (kg): ");
+                    current_inventory = getValidFloat("\nEnter remaining inventory (kg): ");
                     reorder_threshold = getValidFloat("Enter reorder threshold (kg): ");
                     forecastSupply(current_inventory, average_consumption, reorder_threshold);
                 }
@@ -156,28 +156,51 @@ void inputConsumption(float daily_usage[], int *has_data) {
 
 void analyzeConsumption(float daily_usage[], float *total, float *average) {
     float sum = 0;
-    float min_usage = daily_usage[0];
-    float max_usage = daily_usage[0];
-
-    printf("\n--- Weekly Breakdown ---\n");
+    
+    // 1. Calculate Sum and Average first
     for (int i = 0; i < 7; i++) {
         sum += daily_usage[i];
-        if (daily_usage[i] < min_usage) min_usage = daily_usage[i];
-        if (daily_usage[i] > max_usage) max_usage = daily_usage[i];
-        printf("Day %d: %.2f kg\n", i + 1, daily_usage[i]);
     }
-
     *total = sum;
     *average = sum / 7.0;
+
+    // 2. Define Safety Zone (20% tolerance)
+    float tolerance = *average * 0.20;
+    float stableMin = *average - tolerance;
+    float stableMax = *average + tolerance;
+
+    int stableDays = 0;
+    int highDays = 0;
+    int lowDays = 0;
+
+    // 3. Count the days
+    printf("\n--- Weekly Breakdown ---\n");
+    for (int i = 0; i < 7; i++) {
+        printf("Day %d: %.2f kg", i + 1, daily_usage[i]);
+
+        if (daily_usage[i] >= stableMin && daily_usage[i] <= stableMax) {
+            stableDays++;
+            printf(" (Normal)\n");
+        } else if (daily_usage[i] > stableMax) {
+            highDays++;
+            printf(" (High)\n");
+        } else {
+            lowDays++;
+            printf(" (Low)\n");
+        }
+    }
 
     printf("\nTotal Usage:   %.2f kg\n", *total);
     printf("Daily Average: %.2f kg\n", *average);
 
-    // Fluctuation Logic
-    if ((max_usage - min_usage) > (*average * 0.5)) {
-        printf("Status:        VOLATILE (High Fluctuation)\n");
+    // 4. Final Decision
+    printf("Status:        ");
+    if (stableDays >= 5) {
+        printf("STABLE Consumption\n");
+    } else if (highDays > lowDays) {
+        printf("FLUCTUATING (Trending High)\n");
     } else {
-        printf("Status:        STABLE Consumption\n");
+        printf("FLUCTUATING (Trending Low)\n");
     }
 }
 
