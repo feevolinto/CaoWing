@@ -48,8 +48,8 @@ int main() {
     // 1. Load Supplier Database automatically on startup
     loadSuppliers(suppliers, &supplier_count);
 
-    // 2. Ask to load previous session data (Feature from Program 1)
-    char load_choice = getYesNo("\n[System] Found 'week_cacao.txt'. Load previous session? (y/n): ");
+    // 2. Ask to load previous session data
+    char load_choice = getYesNo("\n[System] Found 'week_cacao.txt'. Load previous week? (y/n): ");
     if (load_choice == 'y' || load_choice == 'Y') {
         if (loadWeekData(daily_usage, &average_consumption)) {
             // Re-calculate total based on loaded avg to ensure consistency
