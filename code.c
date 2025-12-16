@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h> // Required for tolower() function
+#include <ctype.h>
 
 // Use at least one user-defined function for computations (e.g., forecasting supply).
 typedef struct {
@@ -139,7 +139,7 @@ int getValidInt(const char *prompt) {
     return value;
 }
 
-// Helper to convert string to lowercase for search comparison
+// Helper function to convert string to lowercase for search comparison
 void toLowerCase(char *source, char *destination) {
     int i = 0;
     while (source[i] != '\0') {
@@ -156,7 +156,7 @@ void loadSuppliers(Supplier suppliers[], int *count) {
         printf("\n[!] File Error: 'suppliers.txt' not found.\n");
         return;
     }
-    // Reads CSV format: Name, Address, Contact, Capacity
+    // Reads format: Name, Address, Contact, Capacity
     while (*count < 100 && fscanf(file, " %99[^,], %149[^,], %99[^,], %49[^\n]", 
             suppliers[*count].name, 
             suppliers[*count].address, 
